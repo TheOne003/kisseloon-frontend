@@ -1,0 +1,18 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Button - Shopping Cart" filter="url(#filter0_d_0_11)">
+<rect x="2" y="1" width="40" height="40" rx="20" fill="white" shape-rendering="crispEdges"/>
+<path id="Icon" d="M13.5131 13C13.2258 13 13 13.2271 13 13.5161C13 13.8052 13.2258 14.0323 13.5131 14.0323H15.0525L17.6182 23.3226C17.7413 23.7665 18.1519 24.0968 18.6445 24.0968H27.8808C28.3735 24.0968 28.784 23.7665 28.9071 23.3226L30.9596 16.6129C31.1444 15.9729 30.6723 15.3226 30.0052 15.3226H17.3103L16.6946 13.3613C16.5919 13.1548 16.3662 13 16.0788 13H13.5131ZM18.6445 25.9032C17.7927 25.9032 17.1051 26.5948 17.1051 27.4516C17.1051 28.3084 17.7927 29 18.6445 29C19.4963 29 20.1839 28.3084 20.1839 27.4516C20.1839 26.5948 19.4963 25.9032 18.6445 25.9032ZM27.8808 25.9032C27.029 25.9032 26.3414 26.5948 26.3414 27.4516C26.3414 28.3084 27.029 29 27.8808 29C28.7326 29 29.4202 28.3084 29.4202 27.4516C29.4202 26.5948 28.7326 25.9032 27.8808 25.9032Z" fill="#0B1C30"/>
+</g>
+<defs>
+<filter id="filter0_d_0_11" x="0" y="0" width="44" height="44" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="1"/>
+<feGaussianBlur stdDeviation="1"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_0_11"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_0_11" result="shape"/>
+</filter>
+</defs>
+</svg>

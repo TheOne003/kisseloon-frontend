@@ -1,0 +1,42 @@
+export const DEMO_NOTIFICATIONS = [
+  {
+    id: 'n1',
+    section: 'today',
+    type: 'price',
+    title: 'Toor Dal price dropped ₹20 on Blinkit!',
+    timeLabel: '2h ago',
+    unread: true,
+  },
+  {
+    id: 'n2',
+    section: 'today',
+    type: 'delivered',
+    title: 'Your order #KL4521 has been delivered',
+    timeLabel: '5h ago',
+    unread: false,
+  },
+  {
+    id: 'n3',
+    section: 'today',
+    type: 'feature',
+    title: 'Compare prices in real-time! Try our new live feed',
+    timeLabel: '8h ago',
+    unread: true,
+  },
+  {
+    id: 'n4',
+    section: 'yesterday',
+    type: 'promo',
+    title: 'Get 15% off on your first grocery order!',
+    timeLabel: '1d ago',
+    unread: false,
+  },
+  {
+    id: 'n5',
+    section: 'yesterday',
+    type: 'stock',
+    title: 'Items in your wishlist are back in stock',
+    timeLabel: '1d ago',
+    unread: false,
+  },
+];

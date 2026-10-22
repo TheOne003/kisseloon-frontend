@@ -1,0 +1,38 @@
+export const DEMO_ORDERS = [
+  {
+    id: 'KL90281',
+    category: 'food',
+    dateLabel: 'Today, 2:15 PM',
+    items: '2x Paneer Butter Masala, 1x Butter Naan',
+    platform: 'Zepto Cafe',
+    total: 349,
+    status: 'delivered',
+  },
+  {
+    id: 'KL89271',
+    category: 'grocery',
+    dateLabel: '14 Sept 2026',
+    items: 'Rice 5kg, Toor Dal 1kg, Milk 1L, Fortune Oil',
+    platform: 'Blinkit',
+    total: 612,
+    status: 'delivered',
+  },
+  {
+    id: 'KL87461',
+    category: 'food',
+    dateLabel: '11 Sept 2026',
+    items: '1x Veg Loaded Pizza, 1x Garlic Bread',
+    platform: 'Instamart',
+    total: 289,
+    status: 'cancelled',
+  },
+  {
+    id: 'KL85123',
+    category: 'grocery',
+    dateLabel: '08 Sept 2026',
+    items: 'Aashirvaad Atta 10kg, Sugar 2kg, Onions 3kg',
+    platform: 'Zepto',
+    total: 512,
+    status: 'delivered',
+  },
+];
