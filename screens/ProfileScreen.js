@@ -14,6 +14,7 @@ import {
   ProfileLogoutIcon,
   ProfilePhoneLockIcon,
   ProfileUserIcon,
+  StoreIcon,
   VerifiedBadgeIcon,
 } from '../components/icons';
 import LogoutConfirmSheet from '../components/LogoutConfirmSheet';
@@ -83,6 +84,8 @@ export default function ProfileScreen({
   onNotifications,
   onTerms,
   onLogout,
+  onConnectedPlatforms,
+  connectedCount = 0,
 }) {
   const { colors } = useTheme();
   const [logoutVisible, setLogoutVisible] = useState(false);
@@ -152,6 +155,17 @@ export default function ProfileScreen({
             title="Personal Information"
             subtitle="Name, email and mobile number"
             onPress={onPersonalInfo}
+          />
+          <MenuRow
+            colors={colors}
+            icon={<StoreIcon width={14} height={14} color={iconColor} />}
+            title="Connected platforms"
+            subtitle={
+              connectedCount > 0
+                ? `${connectedCount} linked · tap to manage`
+                : 'Connect apps to compare prices'
+            }
+            onPress={onConnectedPlatforms}
           />
           <MenuRow
             colors={colors}

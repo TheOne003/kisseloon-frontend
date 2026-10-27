@@ -11,13 +11,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import {
   LockIcon,
-  PhoneIcon,
   ShieldIcon,
   VerifyArrowIcon,
 } from '../components/icons';
 import BackButton from '../components/BackButton';
 import PlatformIcon from '../components/PlatformIcon';
-import { DEMO_OTP, isDemoOtp } from '../constants/auth';
+import { DEMO_OTP, isDemoOtp, maskEmail } from '../constants/auth';
 import { Pressable, SafeAreaView, ScrollView, Text, TextInput, View } from '../theme/themed';
 import ThemedStatusBar from '../components/ThemedStatusBar';
 
@@ -29,16 +28,10 @@ const FEED = [
   { id: 'instamart', name: 'Instamart', time: '14 mins' },
 ];
 
-function maskPhone(phone = '') {
-  const digits = phone.replace(/\D/g, '');
-  if (digits.length < 4) return '+91 ••••••••••';
-  return `+91 ${digits.slice(0, 2)}••••••${digits.slice(-2)}`;
-}
-
 export default function OtpScreen({
-  phone,
+  email,
   onBack,
-  onChangeNumber,
+  onChangeEmail,
   onVerify,
   onHelp,
 }) {
@@ -180,8 +173,8 @@ export default function OtpScreen({
             <Text style={styles.title}>Enter your OTP</Text>
             <Text style={styles.subtitle}>We sent a 6-digit code to</Text>
             <View style={styles.phoneRow}>
-              <Text style={styles.phoneText}>{maskPhone(phone)}</Text>
-              <Pressable onPress={onChangeNumber} hitSlop={8}>
+              <Text style={styles.phoneText}>{maskEmail(email)}</Text>
+              <Pressable onPress={onChangeEmail} hitSlop={8}>
                 <Text style={styles.changeText}>Change</Text>
               </Pressable>
             </View>
@@ -221,7 +214,7 @@ export default function OtpScreen({
               onChangeText={handleOtpChange}
               keyboardType="number-pad"
               textContentType="oneTimeCode"
-              autoComplete="sms-otp"
+              autoComplete="one-time-code"
               maxLength={OTP_LENGTH}
               style={styles.hiddenInput}
               caretHidden
@@ -231,7 +224,7 @@ export default function OtpScreen({
               <View style={styles.feedbackLeft}>
                 <LockIcon width={9} height={12} />
                 <Text style={styles.feedbackLeftText}>
-                  Auto-reading SMS payload
+                  Check your inbox for the code
                 </Text>
               </View>
               <Text style={styles.feedbackRight}>
@@ -283,12 +276,11 @@ export default function OtpScreen({
                 <Text style={styles.resendLink}>Resend OTP</Text>
               </Pressable>
             </View>
-            <Pressable style={styles.altChannel}>
-              <PhoneIcon width={11} height={11} />
+            <View style={styles.altChannel}>
               <Text style={styles.altChannelText}>
-                Get OTP via WhatsApp or Call
+                Check your inbox or spam folder
               </Text>
-            </Pressable>
+            </View>
           </View>
 
           <View style={styles.feedCard}>
