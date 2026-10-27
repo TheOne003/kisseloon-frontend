@@ -9,7 +9,7 @@ import {
 
 import { ArrowIcon, ClearIcon, ScaleIcon } from '../components/icons';
 import PlatformIcon from '../components/PlatformIcon';
-import { DEMO_PHONE } from '../constants/auth';
+import { DEMO_EMAIL, isValidEmail } from '../constants/auth';
 import { Pressable, SafeAreaView, ScrollView, Text, TextInput, View } from '../theme/themed';
 import ThemedStatusBar from '../components/ThemedStatusBar';
 
@@ -20,14 +20,13 @@ const PARTNERS = [
 ];
 
 export default function WelcomeScreen({ onGetOtp }) {
-  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
 
-  const handlePhoneChange = (value) => {
-    const digits = value.replace(/\D/g, '').slice(0, 10);
-    setPhone(digits);
+  const handleEmailChange = (value) => {
+    setEmail(value.replace(/\s/g, '').slice(0, 64));
   };
 
-  const canSubmit = phone.length === 10;
+  const canSubmit = isValidEmail(email);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -63,32 +62,28 @@ export default function WelcomeScreen({ onGetOtp }) {
           </View>
 
           <View style={styles.formCard}>
-            <Text style={styles.label}>MOBILE NUMBER</Text>
+            <Text style={styles.label}>EMAIL ID</Text>
 
             <View style={styles.inputRow}>
-              <View style={styles.prefix}>
-                <Text style={styles.prefixText}>+91</Text>
-                <View style={styles.divider} />
-              </View>
-
               <TextInput
                 style={styles.input}
-                value={phone}
-                onChangeText={handlePhoneChange}
-                placeholder="Enter 10-digit number"
+                value={email}
+                onChangeText={handleEmailChange}
+                placeholder="Enter email address"
                 placeholderTextColor="rgba(118,119,125,0.7)"
-                keyboardType="number-pad"
-                maxLength={10}
-                textContentType="telephoneNumber"
-                autoComplete="tel"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
+                autoComplete="email"
+                textContentType="emailAddress"
               />
 
-              {phone.length > 0 && (
+              {email.length > 0 && (
                 <Pressable
                   style={styles.clearButton}
-                  onPress={() => setPhone('')}
+                  onPress={() => setEmail('')}
                   hitSlop={8}
-                  accessibilityLabel="Clear mobile number"
+                  accessibilityLabel="Clear email"
                 >
                   <ClearIcon width={15} height={15} />
                 </Pressable>
@@ -97,10 +92,10 @@ export default function WelcomeScreen({ onGetOtp }) {
 
             <Pressable
               style={styles.demoFill}
-              onPress={() => setPhone(DEMO_PHONE)}
+              onPress={() => setEmail(DEMO_EMAIL)}
             >
               <Text style={styles.demoFillText}>
-                Use demo number {DEMO_PHONE}
+                Use demo email {DEMO_EMAIL}
               </Text>
             </Pressable>
 
@@ -109,7 +104,7 @@ export default function WelcomeScreen({ onGetOtp }) {
               disabled={!canSubmit}
               onPress={() => {
                 Keyboard.dismiss();
-                onGetOtp?.(phone);
+                onGetOtp?.(email.trim());
               }}
             >
               <Text style={styles.ctaText}>Get OTP</Text>
@@ -229,31 +224,12 @@ const styles = StyleSheet.create({
     paddingLeft: 14,
     paddingRight: 10,
   },
-  prefix: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingRight: 12,
-  },
-  prefixText: {
-    color: '#0b1c30',
-    fontSize: 14,
-    fontFamily: 'Inter_700Bold',
-    letterSpacing: 0.14,
-    lineHeight: 18,
-  },
-  divider: {
-    width: 1,
-    height: 16,
-    backgroundColor: '#c6c6cd',
-    marginLeft: 4,
-  },
   input: {
     flex: 1,
     color: '#0b1c30',
     fontSize: 16,
     fontFamily: 'Inter_600SemiBold',
-    letterSpacing: 0.4,
+    letterSpacing: 0.2,
     paddingVertical: 0,
   },
   clearButton: {

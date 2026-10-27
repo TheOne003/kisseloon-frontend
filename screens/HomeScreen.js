@@ -23,6 +23,14 @@ import {
   HeaderProfileButton,
 } from '../components/HeaderIconButton';
 import ChooseLocationSheet from '../components/ChooseLocationSheet';
+import ConnectPlatformSheet from '../components/ConnectPlatformSheet';
+import PlatformLinkSheet from '../components/PlatformLinkSheet';
+import {
+  MIN_COMPARE_PLATFORMS,
+  canComparePrices,
+  countActivePlatforms,
+  getConnectionById,
+} from '../constants/connectablePlatforms';
 import { fetchCurrentLocationLabel } from '../services/locationService';
 import { useTheme } from '../theme/ThemeContext';
 import { Pressable, SafeAreaView, ScrollView, Text, View } from '../theme/themed';
@@ -273,12 +281,18 @@ export default function HomeScreen({
   onProfile,
   onAddAddress,
   onLocationChange,
+  connections = [],
+  onConnectPlatform,
+  promptConnect = false,
+  onConnectPromptSeen,
 }) {
   const [mealIndex, setMealIndex] = useState(0);
   const [locationSheetOpen, setLocationSheetOpen] = useState(false);
   const [location, setLocation] = useState(initialLocation);
   const [selectedAddressId, setSelectedAddressId] = useState('home');
   const [locating, setLocating] = useState(false);
+  const [connectListOpen, setConnectListOpen] = useState(false);
+  const [linkPlatform, setLinkPlatform] = useState(null);
   const mealRef = useRef(null);
 
   useEffect(() => {
@@ -293,6 +307,42 @@ export default function HomeScreen({
   };
 
   const { colors } = useTheme();
+  const readyToCompare = canComparePrices(connections);
+
+  useEffect(() => {
+    if (!promptConnect) return undefined;
+    if (canComparePrices(connections)) {
+      onConnectPromptSeen?.();
+      return undefined;
+    }
+    const timer = setTimeout(() => setConnectListOpen(true), 1000);
+    return () => clearTimeout(timer);
+    // Show once after login — ignore callback identity changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [promptConnect]);
+
+  const skipConnect = () => {
+    setConnectListOpen(false);
+    onConnectPromptSeen?.();
+  };
+
+  const openConnectList = () => setConnectListOpen(true);
+
+  const handleSelectFood = () => {
+    if (!readyToCompare) {
+      openConnectList();
+      return;
+    }
+    onSelectFood?.();
+  };
+
+  const handleSelectGrocery = () => {
+    if (!readyToCompare) {
+      openConnectList();
+      return;
+    }
+    onSelectGrocery?.();
+  };
 
   return (
     <SafeAreaView
@@ -364,7 +414,7 @@ export default function HomeScreen({
             badgeTextStyle={styles.foodBadgeText}
             title="Food"
             subtitle="Find dishes & restaurants"
-            onPress={onSelectFood}
+            onPress={handleSelectFood}
           />
           <ModeCard
             images={GROCERY_MODE_IMAGES}
@@ -373,7 +423,7 @@ export default function HomeScreen({
             badgeTextStyle={styles.groceryBadgeText}
             title="Grocery"
             subtitle="Compare everyday essentials"
-            onPress={onSelectGrocery}
+            onPress={handleSelectGrocery}
             startDelay={1000}
           />
         </View>
@@ -468,6 +518,40 @@ export default function HomeScreen({
         onAddAddress={() => {
           setLocationSheetOpen(false);
           onAddAddress?.();
+        }}
+      />
+
+      <ConnectPlatformSheet
+        visible={connectListOpen}
+        connections={connections}
+        onClose={skipConnect}
+        onSkip={skipConnect}
+        onSelect={(platform) => {
+          setConnectListOpen(false);
+          setTimeout(() => setLinkPlatform(platform), 260);
+        }}
+      />
+      <PlatformLinkSheet
+        visible={Boolean(linkPlatform)}
+        platform={linkPlatform}
+        onClose={() => {
+          setLinkPlatform(null);
+          if (!canComparePrices(connections)) {
+            setTimeout(() => setConnectListOpen(true), 260);
+          } else {
+            onConnectPromptSeen?.();
+          }
+        }}
+        onLinked={(next) => {
+          const alreadyActive =
+            getConnectionById(connections, next.id)?.status === 'connected';
+          const nextCount =
+            countActivePlatforms(connections) + (alreadyActive ? 0 : 1);
+          onConnectPlatform?.(next);
+          setLinkPlatform(null);
+          if (nextCount < MIN_COMPARE_PLATFORMS) {
+            setTimeout(() => setConnectListOpen(true), 280);
+          }
         }}
       />
     </SafeAreaView>

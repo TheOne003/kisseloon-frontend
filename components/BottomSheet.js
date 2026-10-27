@@ -1,11 +1,13 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
   Dimensions,
   Easing,
+  Keyboard,
   Modal,
   PanResponder,
-  StyleSheet
+  Platform,
+  StyleSheet,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../theme/ThemeContext';
@@ -27,12 +29,35 @@ export default function BottomSheet({
   maxHeight = '80%',
   /** When false, the whole sheet can be dragged down to dismiss */
   handleOnly = true,
+  avoidKeyboard = false,
 }) {
   const insets = useSafeAreaInsets();
   const { colors } = useTheme();
   const translateY = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
   const backdrop = useRef(new Animated.Value(0)).current;
   const closing = useRef(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+
+  useEffect(() => {
+    if (!avoidKeyboard || !visible) {
+      setKeyboardHeight(0);
+      return undefined;
+    }
+    const showEvent =
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent =
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+    const onShow = (event) => {
+      setKeyboardHeight(event?.endCoordinates?.height ?? 0);
+    };
+    const onHide = () => setKeyboardHeight(0);
+    const showSub = Keyboard.addListener(showEvent, onShow);
+    const hideSub = Keyboard.addListener(hideEvent, onHide);
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, [avoidKeyboard, visible]);
 
   const animateIn = () => {
     closing.current = false;
@@ -156,7 +181,9 @@ export default function BottomSheet({
             styles.sheet,
             {
               maxHeight,
-              paddingBottom: Math.max(insets.bottom, 20),
+              paddingBottom:
+                Math.max(insets.bottom, 16) +
+                (avoidKeyboard ? Math.max(keyboardHeight - insets.bottom, 0) : 0),
               transform: [{ translateY }],
               backgroundColor: colors.surface,
             },
