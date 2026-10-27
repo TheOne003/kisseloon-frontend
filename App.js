@@ -29,7 +29,10 @@ import { ThemeProvider, useTheme } from './theme/ThemeContext';
 import ItemRaceComparisonAnimation from './components/ItemRaceComparisonAnimation';
 import CartOrbitComparisonAnimation from './components/CartOrbitComparisonAnimation';
 import VideoSplashScreen from './screens/VideoSplashScreen';
+import { DEMO_EMAIL, normalizeEmail } from './constants/auth';
+import { countActivePlatforms } from './constants/connectablePlatforms';
 import WelcomeScreen from './screens/WelcomeScreen';
+import ConnectedPlatformsScreen from './screens/ConnectedPlatformsScreen';
 import OtpScreen from './screens/OtpScreen';
 import OtpHelpScreen from './screens/OtpHelpScreen';
 import HomeScreen from './screens/HomeScreen';
@@ -128,7 +131,10 @@ function AppNavigator() {
   const [screen, setScreen] = useState('welcome');
   const [returnScreen, setReturnScreen] = useState('home');
   const [cartReturnScreen, setCartReturnScreen] = useState('home');
-  const [phone, setPhone] = useState('');
+  const [loginEmail, setLoginEmail] = useState('');
+  const [connectedPlatforms, setConnectedPlatforms] = useState([]);
+  const [promptConnect, setPromptConnect] = useState(false);
+  const [platformsReturnScreen, setPlatformsReturnScreen] = useState('profile');
   const [deliveryLocation, setDeliveryLocation] = useState('Ghaziabad');
   const [searchResult, setSearchResult] = useState(null);
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
@@ -249,6 +255,10 @@ function AppNavigator() {
     }
     if (screen === 'personal-information') {
       move('profile');
+      return true;
+    }
+    if (screen === 'connected-platforms') {
+      move(platformsReturnScreen || 'profile');
       return true;
     }
     if (screen === 'profile') {
@@ -782,9 +792,26 @@ function AppNavigator() {
 
   const openPersonalInfo = () => goTo('personal-information', 'forward');
 
+  const openConnectedPlatforms = () => {
+    setPlatformsReturnScreen(screen === 'home' ? 'home' : 'profile');
+    goTo('connected-platforms', 'forward');
+  };
+
+  const connectPlatform = (next) => {
+    setConnectedPlatforms((prev) => {
+      const rest = prev.filter((item) => item.id !== next.id);
+      return [...rest, next];
+    });
+  };
+
+  const disconnectPlatform = (id) => {
+    setConnectedPlatforms((prev) => prev.filter((item) => item.id !== id));
+  };
+
   const canSwipeBack = [
     'profile',
     'personal-information',
+    'connected-platforms',
     'order-history',
     'notifications',
     'cart',
@@ -820,8 +847,8 @@ function AppNavigator() {
         >
         {screen === 'welcome' && (
           <WelcomeScreen
-            onGetOtp={(nextPhone) => {
-              setPhone(nextPhone);
+            onGetOtp={(nextEmail) => {
+              setLoginEmail(nextEmail);
               goTo('otp', 'forward');
             }}
           />
@@ -829,11 +856,19 @@ function AppNavigator() {
 
         {screen === 'otp' && (
           <OtpScreen
-            phone={phone}
+            email={loginEmail}
             onBack={() => goTo('welcome', 'back')}
-            onChangeNumber={() => goTo('welcome', 'back')}
+            onChangeEmail={() => goTo('welcome', 'back')}
             onHelp={() => goTo('otp-help', 'forward')}
-            onVerify={() => goTo('home', 'forward')}
+            onVerify={() => {
+              const nextEmail = normalizeEmail(loginEmail) || DEMO_EMAIL;
+              setProfileUser((current) => ({
+                ...current,
+                email: nextEmail,
+              }));
+              setPromptConnect(true);
+              goTo('home', 'forward');
+            }}
           />
         )}
 
@@ -850,6 +885,10 @@ function AppNavigator() {
           <HomeScreen
             location={deliveryLocation}
             onLocationChange={setDeliveryLocation}
+            connections={connectedPlatforms}
+            onConnectPlatform={connectPlatform}
+            promptConnect={promptConnect}
+            onConnectPromptSeen={() => setPromptConnect(false)}
             onSelectFood={openFood}
             onSelectGrocery={openGrocery}
             onCheckDeals={() => console.log('Check deals')}
@@ -1180,7 +1219,7 @@ function AppNavigator() {
             name={profileUser.name}
             initials={profileUser.initials}
             email={profileUser.email}
-            phone={formatProfilePhone(phone)}
+            phone={formatProfilePhone()}
             onBack={() => goTo(profileReturnScreen || 'home', 'back')}
             onPersonalInfo={openPersonalInfo}
             onAddresses={() => {
@@ -1189,11 +1228,24 @@ function AppNavigator() {
             }}
             onOrderHistory={() => goTo('order-history', 'forward')}
             onNotifications={() => goTo('notifications', 'forward')}
+            onConnectedPlatforms={openConnectedPlatforms}
+            connectedCount={countActivePlatforms(connectedPlatforms)}
             onTerms={() => console.log('Terms & Conditions')}
             onLogout={() => {
-              setPhone('');
+              setLoginEmail('');
+              setConnectedPlatforms([]);
+              setPromptConnect(false);
               jumpTo('welcome');
             }}
+          />
+        )}
+
+        {screen === 'connected-platforms' && (
+          <ConnectedPlatformsScreen
+            connections={connectedPlatforms}
+            onBack={() => goTo(platformsReturnScreen || 'profile', 'back')}
+            onConnect={connectPlatform}
+            onDisconnectPlatform={disconnectPlatform}
           />
         )}
 
@@ -1201,7 +1253,7 @@ function AppNavigator() {
           <PersonalInformationScreen
             initialName={profileUser.name}
             initialEmail={profileUser.email}
-            phone={formatProfilePhone(phone)}
+            phone={formatProfilePhone()}
             onBack={() => goTo('profile', 'back')}
             onSave={({ name, email }) => {
               const parts = name.trim().split(/\s+/).filter(Boolean);

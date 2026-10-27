@@ -19,7 +19,7 @@ const FAQS = [
     id: 'not-received',
     question: "Didn't receive the OTP?",
     answer:
-      "Ensure your network connection is stable. Please wait at least 30 seconds before tapping 'Resend OTP'. We also recommend checking your SMS spam folder as security filters can sometimes misroute secure messages.",
+      "Ensure your network connection is stable. Please wait at least 30 seconds before tapping 'Resend OTP'. Check your email inbox and spam folder — security filters can sometimes misroute OTP messages.",
   },
   {
     id: 'expired',
@@ -28,16 +28,16 @@ const FAQS = [
       'Each OTP is valid for a limited time. Tap Resend OTP to get a fresh code, then enter it promptly before it expires.',
   },
   {
-    id: 'wrong-number',
-    question: 'Getting wrong number?',
+    id: 'wrong-email',
+    question: 'Getting the wrong email?',
     answer:
-      'Tap Change on the verification screen and re-enter your 10-digit mobile number carefully. OTPs are always sent to the number you submitted.',
+      'Tap Change on the verification screen and re-enter your email address carefully. OTPs are always sent to the email you submitted.',
   },
   {
-    id: 'whatsapp-call',
-    question: 'WhatsApp or Call OTP',
+    id: 'spam-folder',
+    question: 'OTP in spam?',
     answer:
-      'If SMS is delayed, use Get OTP via WhatsApp or Call on the verification screen for an alternate delivery route.',
+      'If the code is delayed, check your spam or promotions folder. You can also tap Resend OTP to email on the verification screen.',
   },
 ];
 

@@ -57,7 +57,8 @@
           "resizeMode": "contain"
         }
       ],
-      "expo-video"
+      "expo-video",
+      "expo-status-bar"
     ],
     "extra": {
       "eas": {
